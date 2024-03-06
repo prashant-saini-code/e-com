@@ -1,0 +1,42 @@
+{% extends 'basic.html' %}
+
+{% block title %} Login {% endblock %}
+
+{% block body %} 
+{% load custom_tags %}
+{% for category, products in categories_with_products %}
+    <div style="width: 80%; margin: 0 auto;">
+        <h2>Category: {{ category.name }}</h2>
+        <ul style="list-style: none;">
+            {% for product in products %}
+                <li style="margin-bottom: 20px; display: flex; align-items: center;">
+                    <div style="flex: 1;">
+                        <h1>{{ product.name }}</h1>
+                        <p><strong>Price:</strong> {{ product.price }}₹</p>
+                        <p><strong>Stock:</strong> {{ product.stock }}</p>
+                        <p><strong>Categories:</strong>
+                        {% for category in product.categories.all %}
+                            {{ category.name }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                        </p>
+                        <p><strong>Tags:</strong>
+                        {% for tag in product.tags.all %}
+                            {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                        </p>
+                        <form action="{% url 'add_to_cart' product.id %}" method="post" style="display: inline-block;">
+                            {% csrf_token %}
+                            <input type="number" name="quantity" min="1" max="{{ product.stock }}" value="{{ cart|dict_key:product.id }}" style="width: 50px;">
+                            <button type="submit" style="padding: 5px 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">Add to Cart</button>
+                        </form>
+                        <a href="{% url 'product_detail' product.id %}" style="display: inline-block; padding: 5px 10px; background-color: #007bff; color: white; text-decoration: none; margin-left: 10px;">View Details</a>
+                    </div>
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width: 200px; height: auto; margin-left: 20px;">
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'basic.html' %}
+
+{% block title %} Cart {% endblock %}
+
+{% block body %} 
+{% load custom_tags %}
+<h1>Cart</h1>
+    <ul>
+        {% for product in cart_products %}
+            <li>
+
+                <strong>{{ product.name }}</strong> - ${{ product.price }} - Quantity: {{ cart|dict_key:product.id }}
+
+                <form action="{% url 'remove_from_cart' product.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="number" name="quantity" min="1" max="{{ cart|dict_key:product.id }}" value="{{ cart|dict_key:product.id }}">
+                    <button type="submit">Remove</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+
+
+{% endblock %}

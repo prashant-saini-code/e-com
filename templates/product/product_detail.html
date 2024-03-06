@@ -1,0 +1,30 @@
+{% extends 'basic.html' %}
+
+{% block title %} Product {% endblock %}
+
+{% block body %} 
+{% load custom_tags %}
+    <h1>{{ product.name }}</h1>
+    <p><strong>Price:</strong> {{ product.price }}₹ </p>
+    <p><strong>Stock:</strong> {{ product.stock }}</p>
+    {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+    {% endif %}
+    <p><strong>Categories:</strong>
+    {% for category in product.categories.all %}
+        {{ category.name }}{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+    </p>
+    <p><strong>Tags:</strong>
+    {% for tag in product.tags.all %}
+        {{ tag.name }}{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+    </p>
+    <form action="{% url 'add_to_cart' product.id %}" method="post">
+        {% csrf_token %}
+        <input type="number" name="quantity" min="1" max="{{ product.stock }}" value="{{ cart|dict_key:product.id }}">
+        <button type="submit">Add to Cart</button>
+    </form>
+
+
+{% endblock %}
